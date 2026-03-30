@@ -1,0 +1,21 @@
+{
+  "armors_head": [
+    {
+      "id": "ah001",
+      "name": "初魄引蝶簪",
+      "user": ["念绾"],
+      "attack": 2,
+      "spirit": 5,
+      "defense": 5,
+      "speed": 0,
+      "luck": 0,
+      "elements": {
+        "water": 2,
+        "thunder": 3
+      },
+      "effects": [],
+      "price": 150,
+      "description": "华魄流照玉桂，引灵蝶翩跹留驻枝头所化之发簪。佩之有提升灵力之效。"
+    }
+  ]
+}

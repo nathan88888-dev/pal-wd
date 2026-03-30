@@ -1,0 +1,37 @@
+{
+  "weapons": [
+    {
+      "id": "w001",
+      "name": "冰鉴",
+      "user": ["念绾"],
+      "attack": 20,
+      "spirit": 5,
+      "defense": 0,
+      "speed": 0,
+      "luck": 0,
+      "elements": {
+        "water": 3,
+        "thunder": 1
+      },
+      "effects": [],
+      "price": 300,
+      "description": "绛河冰鉴朗，黄道玉轮巍。/r/n弦如冰鉴，映照人影，若离若合，不辞朱颜。"
+    },
+    {
+      "id": "w002",
+      "name": "泠月",
+      "user": ["念绾"],
+      "attack": 18,
+      "spirit": 10,
+      "defense": 0,
+      "speed": 0,
+      "luck": 0,
+      "elements": {
+        "thunder": 5
+      },
+      "effects": [],
+      "price": 400,
+      "description": "泠泠月下韵，一一落海涯。/r/n有清冷月华之灵，白绫翻动，宛若月射寒江，夜光皎洁，秋波明澈。"
+    }
+  ]
+}

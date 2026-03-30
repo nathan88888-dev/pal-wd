@@ -1,0 +1,22 @@
+{
+  "armors_body": [
+    {
+      "id": "ab001",
+      "name": "月华裙",
+      "user": ["念绾"],
+      "attack": 0,
+      "spirit": 5,
+      "defense": 10,
+      "speed": 0,
+      "luck": 0,
+      "elements": {
+        "water": 5,
+        "wind": 2
+      },
+      "effects": [
+      ],
+      "price": 350,
+      "description": "褶裥细密繁多，有九九之数。风动衣袂，犹如皎皎月华长驻。"
+    }
+  ]
+}

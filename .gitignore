@@ -1,0 +1,10 @@
+StreamingAssets/
+Resources/
+ThirdParty/
+Plugins/
+PatchLogic/
+UI Toolkit/
+*.meta
+*.mp4
+Editor/
+HybridCLRData/

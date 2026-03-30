@@ -1,0 +1,26 @@
+{
+  "attribute": "water",
+  "skills": [
+    {
+      "name": "冰咒",
+      "type": "attack",
+      "power": 80,
+      "cost": 15,
+      "effect": "单体伤害，10%概率冻结敌人"
+    },
+    {
+      "name": "雨润",
+      "type": "support",
+      "power": 0,
+      "cost": 20,
+      "effect": "全体回复30%生命，清除中毒"
+    },
+    {
+      "name": "水幕天华",
+      "type": "support",
+      "power": 0,
+      "cost": 25,
+      "effect": "提升全体水抗性30%，持续3回合"
+    }
+  ]
+}

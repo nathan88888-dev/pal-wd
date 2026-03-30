@@ -1,0 +1,21 @@
+{
+  "armors_foot": [
+    {
+      "id": "af001",
+      "name": "瑞凤绣鞋",
+      "user": ["念绾"],
+      "attack": 0,
+      "spirit": 0,
+      "defense": 3,
+      "speed": 5,
+      "luck": 0,
+      "elements": {
+        "fire": 2
+      },
+      "effects": [
+      ],
+      "price": 250,
+      "description": "赤鸾羽为面，火珊瑚为底，鞋头镶嵌南明离火石，踏地时隐有凤鸣。"
+    }
+  ]
+}

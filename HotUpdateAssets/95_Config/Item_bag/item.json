@@ -1,0 +1,104 @@
+{
+  "items": [
+    // ========== 药品类 ==========
+    {
+      "id": "item_001",
+      "name": "止血草",
+      "type": "medicine",
+      "subtype": "heal",
+      "target": "single",
+      "effect": {
+        "restore_hp": 300,
+        "remove_status": []
+      },
+      "price": 50,
+      "battle_usable": true,
+      "description": "山野之中常见的草药，对于治疗外伤有不错的疗效。"
+    },
+    {
+      "id": "item_002",
+      "name": "鼠儿果",
+      "type": "medicine",
+      "subtype": "spirit",
+      "target": "single",
+      "effect": {
+        "restore_sp": 100,
+        "remove_status": []
+      },
+      "price": 150,
+      "battle_usable": true,
+      "description": "山野之中常见的草药，对于治疗外伤有不错的疗效。"
+    },
+    {
+      "id": "item_003",
+      "name": "返魂香",
+      "type": "medicine",
+      "subtype": "revive",
+      "target": "single",
+      "effect": {
+        "revive": true,
+        "restore_hp": 10%Max_Hp
+      },
+      "price": 200,
+      "battle_usable": true,
+      "description": "据说燃此香，病者闻之即起，死未三日者，薰之即活。"
+    },
+
+    // ========== 材料类 ==========
+    {
+      "id": "item_101",
+      "name": "魔剑碎片",
+      "type": "material",
+      "subtype": "weapon",
+      "price": 1000,
+      "synthesis": ["equip_001"],
+      "description": "魔剑断裂后的碎片，煞气未散。"
+    },
+    {
+      "id": "item_102",
+      "name": "赤铜",
+      "type": "material",
+      "subtype": "ore",
+      "price": 300,
+      "synthesis": ["w001", "a001"],
+      "description": "锻造武器的上等矿石，泛赤红色。"
+    },
+
+    // ========== 任务物品类 ==========
+    {
+      "id": "item_201",
+      "name": "龙精石",
+      "type": "quest",
+      "subtype": "key",
+      "price": 0,
+      "battle_usable": false,
+      "description": "龙族秘宝，任务所需的关键物品。"
+    },
+    {
+      "id": "item_202",
+      "name": "雪见的手帕",
+      "type": "quest",
+      "subtype": "story",
+      "price": 0,
+      "battle_usable": false,
+      "description": "绣着雪见名字的手帕，似乎有她的气息。"
+    },
+
+    // ========== 其他功能类 ==========
+    {
+      "id": "item_301",
+      "name": "土灵符",
+      "type": "consumable",
+      "subtype": "scroll",
+      "target": "enemy_all",
+      "effect": {
+        "element": "earth",
+        "power": 100,
+        "cost": 0
+      },
+      "price": 150,
+      "battle_usable": true,
+      "description": "符咒，可对全体敌人造成土系伤害。"
+    }
+  ]
+}

@@ -163,9 +163,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f77735c966c160c4fa002a7dcbbcb8b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayMode: 1
+  PlayMode: 0
   RuntimeSettings: {fileID: 11400000, guid: 4107dd3a4c218484bb43db01bd18a82b, type: 2}
-  RuntimeSettingsPath: http://192.168.0.23:8888/RuntimeSettings.json
+  RuntimeSettingsPath: http://192.168.5.2:8888/Bundles/RuntimeSettings.json
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

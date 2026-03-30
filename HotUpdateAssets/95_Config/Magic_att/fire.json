@@ -1,0 +1,26 @@
+{
+  "attribute": "fire",
+  "skills": [
+    {
+      "name": "炎咒",
+      "type": "attack",
+      "power": 90,
+      "cost": 15,
+      "effect": "单体伤害，附加灼烧效果"
+    },
+    {
+      "name": "火墙",
+      "type": "support",
+      "power": 0,
+      "cost": 20,
+      "effect": "反弹10%近战伤害"
+    },
+    {
+      "name": "烈焰焚天",
+      "type": "attack",
+      "power": 120,
+      "cost": 30,
+      "effect": "全体伤害，对风系敌人增伤50%"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "attribute": "wind",
+  "skills": [
+    {
+      "name": "风咒",
+      "type": "attack",
+      "power": 70,
+      "cost": 10,
+      "effect": "单体伤害，提升自身速度10%"
+    },
+    {
+      "name": "风卷残云",
+      "type": "attack",
+      "power": 100,
+      "cost": 25,
+      "effect": "全体伤害，30%概率击退行动条"
+    },
+    {
+      "name": "神行术",
+      "type": "support",
+      "power": 0,
+      "cost": 20,
+      "effect": "全体速度提升20%，持续3回合"
+    }
+  ]
+}

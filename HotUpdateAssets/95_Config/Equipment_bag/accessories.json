@@ -1,0 +1,37 @@
+{
+  "accessories": [
+    {
+      "id": "acc001",
+      "name": "雪月交光",
+      "user": ["念绾"],
+      "attack": 2,
+      "spirit": 2,
+      "defense": 2,
+      "speed": 2,
+      "luck": 5,
+      "elements": {
+        "water": 5,
+        "wind": 5
+      },
+      "effects": ["水吸收5%","风吸收5%"],
+      "price": 3000,
+      "description": "倾注月宫弟子菁纯灵力的玉佩，附有月神姮娥秘传的祝福仙术，传说诸事顺意之效。"
+    },
+    {
+      "id": "acc002",
+      "name": "北帝玄珠",
+      "user": ["念绾","江荼","倾橙","即墨兮","玉缃欢","葛乌媚"],
+      "attack": 0,
+      "spirit": 2,
+      "defense": 0,
+      "speed": 0,
+      "luck": 0,
+      "elements": {
+        "water": 10
+      },
+      "effects": ["水吸收10%"],
+      "price": 1000,
+      "description": "上古时期，北方大帝助人族击败猛兽所凝晶石，有坚强心志之效。"
+    }
+  ]
+}

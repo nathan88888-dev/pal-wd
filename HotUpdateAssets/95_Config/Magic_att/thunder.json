@@ -1,0 +1,26 @@
+{
+  "attribute": "thunder",
+  "magic": [
+    {
+      "name": "落雷",
+      "type": "attack",
+      "power": 85,
+      "cost": 15,
+      "effect": "单体伤害，20%概率麻痹"
+    },
+    {
+      "name": "雷劫惊闪",
+      "type": "attack",
+      "power": 110,
+      "cost": 25,
+      "effect": "全体伤害"
+    },
+    {
+      "name": "天罡阵",
+      "type": "support",
+      "power": 0,
+      "cost": 30,
+      "effect": "增加我方全体物理攻击力"
+    }
+  ]
+}

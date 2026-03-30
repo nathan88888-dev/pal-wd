@@ -1,0 +1,52 @@
+{
+  "Character": "NianWan",
+  "Attributes":{
+    "Attack":{
+      "Base": 16,
+      "level2Growth": 0.05,
+      "levelGrowth": 8
+    },
+    "Defense": {
+      "Base": 8,
+      "level2Growth": 0.05,
+      "levelGrowth": 5
+    },
+    "Speed": {
+      "Base": 35,
+      "level2Growth": 0.03,
+      "levelGrowth": 8
+    },
+    "Luck": {
+      "Base": 14,
+      "level2Growth": 0.03,
+      "levelGrowth": 6.5
+    },
+    "Spirit": {
+      "Base": 16,
+      "level2Growth": 0.05,
+      "levelGrowth": 7
+    },
+    "HealthPoint": {
+      "Base": 150,
+      "level2Growth": 0.8,
+      "levelGrowth": 39
+    },
+    "SkillPoint": {
+      "Base": 90,
+      "level2Growth": 0.01,
+      "levelGrowth": 0.5
+    },
+    "MagicPoint": {
+      "Base": 88,
+      "level2Growth": 0.05,
+      "levelGrowth": 5
+    }
+  },
+  "Formula": "Value = Base + (level2Growth * level^2) + (levelGrowth * level)",
+  "SkillLearning": [
+    { "Level": 5, "Skills": [1] },
+    { "Level": 10, "Skills": [2] },
+    { "Level": 15, "Skills": [3] },
+    { "Level": 20, "Skills": [4] }
+  ]
+}

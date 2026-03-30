@@ -1,0 +1,26 @@
+{
+  "attribute": "earth",
+  "skills": [
+    {
+      "name": "土咒",
+      "type": "attack",
+      "power": 75,
+      "cost": 10,
+      "effect": "单体伤害，降低目标10%防御"
+    },
+    {
+      "name": "地裂斩",
+      "type": "attack",
+      "power": 95,
+      "cost": 20,
+      "effect": "对浮空敌人造成双倍伤害"
+    },
+    {
+      "name": "石化术",
+      "type": "support",
+      "power": 0,
+      "cost": 30,
+      "effect": "使敌人石化3回合（防御+50%）"
+    }
+  ]
+}
