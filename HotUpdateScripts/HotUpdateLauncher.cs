@@ -20,7 +20,7 @@ public class HotUpdateLauncher : MonoBehaviour
         
     }
     // Start is called before the first frame update
-    public async UniTaskVoid Start()
+    public void Start()
     {
         var gamePackage = YooAssets.GetPackage("SmapleAsset");
         var scriptPackage = YooAssets.GetPackage("SampleScript");

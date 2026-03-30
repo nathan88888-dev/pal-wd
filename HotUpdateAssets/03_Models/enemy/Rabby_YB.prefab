@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 3101748538017028239}
   - component: {fileID: 3101748538023966591}
   m_Layer: 0
-  m_Name: Rabby_Young_Brown
+  m_Name: Rabby_YB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

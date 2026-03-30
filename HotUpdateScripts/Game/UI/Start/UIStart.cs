@@ -1,5 +1,6 @@
 
 using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,12 +13,10 @@ public class UIStart:MonoBehaviour
     public Button quitBtn;
 
     public Text info;
-
-    private GameState gState;
-    protected void Awake()
+    public Transform loadPanel;
+    protected async UniTask Awake()
     {
-        GMemoryCache.Instance.mainCam = Camera.main.GetComponent<MainCam>();
-        gState = GMemoryCache.Instance.GetGameState();
+        await UniTask.WaitUntil(() => DataOperation.Instance !=null);
     }
 
     protected void Start()
@@ -28,6 +27,23 @@ public class UIStart:MonoBehaviour
         });
         quitBtn.onClick.AddListener(() => {
             Application.Quit();
+        });
+        Button[] togs = loadPanel.transform.GetChild(0).Find("loadPages").GetComponentsInChildren<Button>();
+        loadBtn.onClick.AddListener(() =>
+        {
+            loadPanel.gameObject.SetActive(true);
+            togs[0].onClick.Invoke();
+            togs[0].Select();
+        });
+        DataOperation.Instance.showGameDate(
+            togs,
+            loadPanel.transform.GetChild(0).Find("loadPanel").GetComponentsInChildren<UIGameDate>(),
+            (data, state) => {
+                Debug.Log(data.name);
+            });
+        loadPanel.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            loadPanel.gameObject.SetActive(false);
         });
     }
 
@@ -50,7 +66,7 @@ public class UIStart:MonoBehaviour
         };
 
         // 设置游戏状态
-        GMemoryCache.Instance.UpdateGameState(state =>
+        GMemoryCache.Instance.setGameState(state =>
         {
             state.MainCharacterIndex = 0;
             state.chaList = new Character[] { NianWan };

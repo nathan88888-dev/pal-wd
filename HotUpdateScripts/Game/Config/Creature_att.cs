@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
     [Serializable]
-    public class Character_att
+    public class Creature_att
 {
     [System.Serializable]
     public class AttributeGrowth
@@ -40,7 +40,7 @@ using UnityEngine;
     public string Formula { get; set; }
     public List<SkillLearningEntry> SkillLearning { get; set; }
 
-    public Character_att(TextAsset jsonText) {
+    public Creature_att(TextAsset jsonText) {
         JObject root = JObject.Parse(jsonText.text);
 
         CharacterName = root["Character"]?.ToString();

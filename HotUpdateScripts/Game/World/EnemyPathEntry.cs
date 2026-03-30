@@ -1,6 +1,29 @@
 ﻿
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+[System.Serializable]
+public class EnemyList {
+    public List<EnemyPathEntry> entries;
+
+    public EnemyList(List<EnemyPathEntry> _entries)
+    {
+        entries = _entries;
+    }
+    public EnemyList(string jsonAsset) {
+        entries = new List<EnemyPathEntry>();
+
+        JObject root = JObject.Parse(jsonAsset);
+        JArray arr = (JArray)root["entries"];
+        entries = new List<EnemyPathEntry>();
+        for (int i = 0; i < arr.Count; i++)
+        {
+            EnemyPathEntry entry = arr[i].ToObject<EnemyPathEntry>();
+            entry.enemies = arr[i]["enemies"].ToObject<List<EnemyDefinition>>();
+            entries.Add(entry);
+        }
+    }
+}
 
 [System.Serializable]
 public class EnemyPathEntry

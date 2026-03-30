@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 723192ba1a140074e9d48ef1a61d5780, type: 3}
   m_Name: HybridRuntimeSettings
   m_EditorClassIdentifier: 
-  HostServerIP: http://192.168.5.2:8888/
-  ReleaseBuildVersion: 29
-  Packages: '{"SampleScript":"88","SmapleAsset":"88","res(scene)":"88","res(UI)":"88"}'
+  HostServerIP: http://192.168.0.23:8888/
+  ReleaseBuildVersion: 30
+  Packages: '{"SampleScript":"102","SmapleAsset":"102"}'

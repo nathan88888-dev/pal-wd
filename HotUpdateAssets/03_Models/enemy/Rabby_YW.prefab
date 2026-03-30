@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 533816025388039328}
   - component: {fileID: 533816025380868944}
   m_Layer: 0
-  m_Name: Rabby_Young_White
+  m_Name: Rabby_YW
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

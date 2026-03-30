@@ -38,10 +38,62 @@ public class UIBattle : MonoBehaviour
     protected void Awake()
     {
         ShaderFactorOscillator outline = gameObject.AddComponent<ShaderFactorOscillator>();
-        outline.material = (Material)state_Effect;
+        outline.material = state_Effect;
+
+        GameObject battleRoot = GameObject.Find("battleRoot");
+        if (battleRoot == null)
+            return;
+
+        self = battleRoot.transform.Find("self");
+        enemy = battleRoot.transform.Find("enemy");
+
+        attackBtn.onClick.AddListener(() => {
+            setOperationState(operType.Attack);
+        });
+        skillBtn.onClick.AddListener(() => {
+            setOperationState(operType.Skill);
+        });
+        itemBtn.onClick.AddListener(() => {
+            setOperationState(operType.Item);
+        });
+        scapeBtn.onClick.AddListener(() => {
+            setOperationState(operType.Scape);
+        });
+        magicBtn.onClick.AddListener(() => {
+            setOperationState(operType.Magic);
+        });
+        defendBtn.onClick.AddListener(() => {
+            setOperationState(operType.Defend);
+        });
+        resultPanel.GetComponent<Button>().onClick.AddListener(() => {
+            setOperationState(operType.NULL);
+            while (creatureList.Count > 0)
+            {
+                Destroy(creatureList[0]);
+                creatureList.RemoveAt(0);
+            }
+            HotMain.SwitchScene<UIWorld>().Forget();
+        });
     }
+    private Camera mainCamera;
+    private Transform self;
+    private Transform enemy;
+    private Character[] chaList;
+    private List<Character> enemyList;
+
+    private List<KeyValuePair<Character, float>> moveList;
+    private List<KeyValuePair<Character, float>> selectList;
+    private operType curOperType;
+    private Character operCha;
+    private List<GameObject> creatureList;
+
+    
+
     private void OnEnable()
     {
+        setOperationState(operType.NULL);
+        creatureList = new List<GameObject>();
+
         mainCamera = Camera.main;
         mainCamera.transform.position = new Vector3(108, 70, 119);
         mainCamera.transform.eulerAngles = new Vector3(45, 150, 0);
@@ -57,7 +109,6 @@ public class UIBattle : MonoBehaviour
         btnGroup.gameObject.SetActive(false) ;
         resultPanel.localScale = Vector3.zero;
 
-        setOperationState(curOperType = operType.NULL);
         moveList = new List<KeyValuePair<Character, float>>();
         selectList = new List<KeyValuePair<Character, float>>();
 
@@ -66,59 +117,13 @@ public class UIBattle : MonoBehaviour
         scapeBtn.interactable = false;
         itemBtn.interactable = false;
         defendBtn.interactable = false;
-    }
-
-    private Camera mainCamera;
-    private Transform self;
-    private Transform enemy;
-    private Character[] chaList;
-    private List<Character> enemyList;
-
-    private List<KeyValuePair<Character, float>> moveList;
-    private List<KeyValuePair<Character, float>> selectList;
-    private operType curOperType;
-    private Character operCha;
-    private Material enemyOutGlow;
-    protected async UniTask Start()
-    {
-        GameObject battleRoot = GameObject.Find("battleRoot");
-        if (battleRoot == null)
-            return;
-
-        self = battleRoot.transform.Find("self");
-        enemy = battleRoot.transform.Find("enemy");
 
         chaList = GMemoryCache.Instance.GetGameState().chaList;
-        await InitCharacter(chaList);
+        InitCharacter(chaList).Forget();
         enemyList = new List<Character>(GMemoryCache.Instance.GetCharacters("enemies"));
-        await InitCharacter(enemyList.ToArray(), chaList.Length, false);
-        for (int i = 0; i < enemyList.Count; i++) {
-            enemyList[i].CharacterObject.transform.GetChild(0).gameObject.SetActive(false);
-        }
-
-
-        attackBtn.onClick.AddListener(() =>{
-            setOperationState(curOperType = operType.Attack);
-        });
-        skillBtn.onClick.AddListener(() => {
-            setOperationState(curOperType = operType.Skill);
-        });
-        itemBtn.onClick.AddListener(() => {
-            setOperationState(curOperType = operType.Item);
-        });
-        scapeBtn.onClick.AddListener(() => {
-            setOperationState(curOperType = operType.Scape);
-        });
-        magicBtn.onClick.AddListener(() => {
-            setOperationState(curOperType = operType.Magic);
-        });
-        defendBtn.onClick.AddListener(() => {
-            setOperationState(curOperType = operType.Defend);
-        });
-        resultPanel.GetComponent<Button>().onClick.AddListener(() => {
-            HotMain.SwitchScene<UIWorld>().Forget();
-        });
+        InitCharacter(enemyList.ToArray(), chaList.Length, false).Forget();
     }
+
 
     private async UniTask InitCharacter(Character[] chlist,int startIndex = 0, bool isCha = true) {
 
@@ -130,6 +135,8 @@ public class UIBattle : MonoBehaviour
                 isCha ? self.GetChild(i) : enemy.GetChild(i % 3),
                 cha.Name,
                 isCha ? LayerEnum.Character : LayerEnum.Enemy);
+            creatureList.Add(chaobj);
+            chaobj.transform.GetChild(0).gameObject.SetActive(false);
             cha.CleanUI();
             cha.CharacterObject = chaobj;
             cha.animator = chaobj.transform.GetChild(1).GetComponentInChildren<Animator>();
@@ -153,19 +160,14 @@ public class UIBattle : MonoBehaviour
         }
     }
 
-    protected void ondestory()
-    {
-
-    }
-
     private async UniTask DecideToAttackCha()
     {
-        setOperationState(curOperType = operType.Animation);
+        setOperationState(operType.Animation);
         int randomAttack = Random.Range(0, chaList.Length - 1);
         if (await operCha.AttackMove(chaList[randomAttack])) {
             //chaList.Remove(chaList[randomAttack]);
         }
-        setOperationState(curOperType = operType.NULL);
+        setOperationState(operType.NULL);
     }
 
     private async UniTask DetectNearestEnemy()
@@ -194,6 +196,7 @@ public class UIBattle : MonoBehaviour
         {
             selectList[0].Key.CharacterObject.transform.GetChild(0).gameObject.SetActive(false);
             operCha.StatusUI.gameObject.GetComponent<Image>().material = null;
+            Debug.Log(operCha.StatusUI.gameObject.name);
             btnGroup.gameObject.SetActive(false);
             setOperationState(operType.Animation);
             if(await operCha.AttackMove(selectList[0].Key))
@@ -210,6 +213,7 @@ public class UIBattle : MonoBehaviour
 
     void Update()
     {
+        if (enemyList == null) return;
         switch (curOperType)
         {
             case operType.NULL:
@@ -230,7 +234,6 @@ public class UIBattle : MonoBehaviour
                     operCha = moveList[0].Key;
                     if (operCha.Favor > 10)
                     {
-                        operCha.StatusUI.gameObject.GetComponent<Image>().material = (Material)state_Effect;
                         btnGroup.gameObject.SetActive(true);
                     }
                     else
@@ -271,8 +274,12 @@ public class UIBattle : MonoBehaviour
                 operCha = null;
                 break;
             case operType.Animation:
-                if (operCha!=null && operCha == moveList[0].Key)
+                if (operCha != null && operCha == moveList[0].Key)
+                {
                     moveList.RemoveAt(0);
+                    if(operCha.Favor>10)
+                    operCha.StatusUI.gameObject.GetComponent<Image>().material = null;
+                }
                 break;
             case operType.Operation:
             case operType.Attack:
@@ -281,6 +288,8 @@ public class UIBattle : MonoBehaviour
             case operType.Scape:
             case operType.Item:
             case operType.Defend:
+                if (operCha.Favor <= 10) return;
+                operCha.StatusUI.gameObject.GetComponent<Image>().material = state_Effect;
                 attackBtn.interactable = curOperType == operType.Operation || curOperType == operType.Attack;
                 magicBtn.interactable = curOperType == operType.Operation || curOperType == operType.Magic;
                 skillBtn.interactable = curOperType == operType.Operation || curOperType == operType.Skill;

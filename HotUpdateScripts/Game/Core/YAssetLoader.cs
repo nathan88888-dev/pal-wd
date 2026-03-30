@@ -6,26 +6,27 @@ using YooAsset;
 
 public class YAssetLoader: Singleton<YAssetLoader>
 {
-    public async UniTask LoadScene(string _path, System.Action<float> prog) 
+    public async UniTask LoadScene(string _path, UILoading loadUI) 
     {
-
+        loadUI.setTip("加载场景");
         var sceneMode = LoadSceneMode.Single;
         var physicsMode = LocalPhysicsMode.None;
         bool suspendLoad = false;
         SceneHandle SceneHandle = YooAssets.LoadSceneAsync(_path, sceneMode, physicsMode, suspendLoad);
         while (!SceneHandle.IsDone)
         {
-            prog(SceneHandle.Progress * 0.7f);
+            loadUI.SetProgress(SceneHandle.Progress * 0.7f);
             await UniTask.Delay(500);
         }
         string SceneName = SceneHandle.SceneName;
         int sceneID = int.Parse(SceneName.Substring(0, SceneName.IndexOf("_")));
         if (sceneID >= 100)
         {
+            loadUI.setTip("加载数据");
             AssetHandle NMDataHandle = YooAssets.LoadAssetAsync<NavMeshData>($"{SceneHandle.SceneName}_NavMesh-Terrain");
             while (!NMDataHandle.IsDone)
             {
-                prog(0.7f+NMDataHandle.Progress * 0.3f);
+                loadUI.SetProgress(0.7f+NMDataHandle.Progress * 0.3f);
                 await UniTask.Delay(500);
             }
             NavMeshData NMData = (NavMeshData)NMDataHandle.AssetObject;

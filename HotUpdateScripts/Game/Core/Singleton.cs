@@ -1,6 +1,8 @@
 
 
-    public class Singleton<T> where T : Singleton<T>, new()
+using Cysharp.Threading.Tasks;
+
+public class Singleton<T> where T : Singleton<T>, new()
     {
 
         private static T m_instance;
@@ -12,13 +14,12 @@
                 if (m_instance == null)
                 {
                     m_instance = new T();
-                    m_instance.Initialize();
+                    m_instance.Initialize().Forget();
                 }
                 return m_instance;
             }
         }
 
-        protected virtual void Initialize()
-        {
-        }
+        protected virtual async UniTask Initialize()
+        {}
     }

@@ -73,9 +73,13 @@ public class PatchEventDefine
     /// </summary>
     public class PackageVersionRequestFailed : IEventMessage
     {
-        public static void SendEventMessage()
+        public string packageName = "";
+        public string netstate = "";
+        public static void SendEventMessage(string _packageName, string _netstate)
         {
             var msg = new PackageVersionRequestFailed();
+            msg.packageName = _packageName;
+            msg.netstate = _netstate;
             UniEvent.SendMessage(msg);
         }
     }

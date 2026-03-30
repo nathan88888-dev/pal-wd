@@ -1,5 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class UIManager : Singleton<UIManager>
@@ -7,59 +10,64 @@ public class UIManager : Singleton<UIManager>
     private GameObject uiParent;
     private Dictionary<string, MonoBehaviour> _uiCache = new();
     private string lastUI = "";
-    private MonoBehaviour uiLoading;
-    protected override void Initialize()
+    private UIMsgBox uiMsgBox;
+    private UILoading uiLoading;
+    protected override async UniTask Initialize()
     {
-        Debug.Log("UIManager Initialize");
         uiParent = GameObject.Find("UIParent");
+
+        uiMsgBox = await LoadUI<UIMsgBox>();
+        uiMsgBox.gameObject.SetActive(false);
+        uiLoading = await LoadUI<UILoading>();
+        uiLoading.gameObject.SetActive(false);
     }
-    public async UniTask<T> ShowUIAsync<T>() where T:MonoBehaviour
+
+    public void ShowMsg(string msg, Action onok, Action oncancel) 
+    {
+        uiMsgBox.ShowMsg(msg, onok, oncancel);
+    }
+
+    public async UniTask<UILoading> GetLoadingUI()
+    {
+        await UniTask.WaitUntil(()=>uiLoading != null);
+        uiLoading.gameObject.SetActive(true);
+        return uiLoading;
+    }
+
+    private async UniTask<T> LoadUI<T>() where T : MonoBehaviour
     {
         string address = typeof(T).Name;
-        if (address == "UILoading" && uiLoading!=null)
-        {
-            uiLoading.gameObject.SetActive(true);
-            return (T)uiLoading;
-        }
-        if (address == lastUI) return null;
+        GameObject go = (GameObject)await YAssetLoader.Instance.Load<GameObject>(address);
+        T com = go.GetComponent<T>();
+        RectTransform rtrans = go.GetComponent<RectTransform>();
+        rtrans.SetParent(uiParent.transform);
+        rtrans.SetAsFirstSibling();
+        rtrans.sizeDelta = new Vector2(0, 0);
+        rtrans.localPosition = Vector3.zero;
+        rtrans.localScale = Vector3.one;
+        return com;
+    }
+
+    public async UniTask ShowUIAsync<T>() where T:MonoBehaviour
+    {
+        string address = typeof(T).Name;
+        if (address == lastUI) return;
         if(lastUI!=null && _uiCache.ContainsKey(lastUI))
             _uiCache[lastUI].gameObject.SetActive(false);
-        if (address != "UILoading")
-        {
-            Debug.Log($"switchUIAsync:{lastUI}=>{address}");
-            lastUI = address;
-        }
+        Debug.Log($"switchUIAsync:{lastUI}=>{address}");
+        lastUI = address;
         // 如果已经加载并缓存，则直接显示
         if (_uiCache.TryGetValue(address, out var com) && com != null)
         {
             com.gameObject.SetActive(true);
-            return (T)com;
+            return;
         }
-        GameObject go = (GameObject)await YAssetLoader.Instance.Load<GameObject>(address);
-        com = go.GetComponent<T>();
-        RectTransform rtrans = go.GetComponent<RectTransform>();
-        rtrans.SetParent(uiParent.transform);
-        rtrans.sizeDelta = new Vector2(3840, 2160);
-        rtrans.localPosition = Vector3.zero;
-        rtrans.localScale = Vector3.one;
-        if (address == "UILoading")
-        {
-            uiLoading = com;
-        }
-        else {
-            _uiCache[address] = com;
-        }
-        return (T)com;
+        _uiCache[address] = await LoadUI<T>();
     }
 
     public void HideUI<T>()
     {
         string address = typeof(T).Name;
-        if (address == "UILoading"&& uiLoading!=null)
-        {
-            uiLoading.gameObject.SetActive(false);
-            return;
-        }
         if (_uiCache.TryGetValue(address, out var go) && go != null)
             go.gameObject.SetActive(false);
     }

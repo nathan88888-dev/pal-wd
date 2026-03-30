@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 5886168729634466482}
   - component: {fileID: 5886168729624577346}
   m_Layer: 0
-  m_Name: Rabby_Queen_Green
+  m_Name: Rabby_QG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

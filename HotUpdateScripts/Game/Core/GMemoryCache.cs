@@ -1,12 +1,10 @@
 ﻿
 using Cysharp.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 public class GMemoryCache : Singleton<GMemoryCache>
 {
 
@@ -26,6 +24,7 @@ public class GMemoryCache : Singleton<GMemoryCache>
         _characterCache = new Dictionary<string, Character[]>();
         _itemCache = new Dictionary<string, Item[]>();
         _currentGameState = new GameState();
+        mainCam = Camera.main.GetComponent<MainCam>();
 
         SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
         {
@@ -33,7 +32,6 @@ public class GMemoryCache : Singleton<GMemoryCache>
             _currentGameState.CurrentScene = scene;
         };
     }
-
 
     public async UniTask<GameObject> LoadCharacter(Transform parent, string name, LayerEnum layer) {
         GameObject go = (GameObject)await YAssetLoader.Instance.Load<GameObject>(
@@ -53,18 +51,8 @@ public class GMemoryCache : Singleton<GMemoryCache>
         List<EnemyPathEntry> entries;
         if (_currentGameState.enemyData == null)
         {
-            string jsonAsset = ((TextAsset)await YAssetLoader.Instance.Load<TextAsset>(
-                _currentGameState.CurrentScene.name + "_sceneEnemy")).text;
-
-            JObject root = JObject.Parse(jsonAsset);
-            JArray arr = (JArray)root["entries"];
-            entries = new List<EnemyPathEntry>();
-            for (int i = 0;i < arr.Count;i++)
-            {
-                EnemyPathEntry entry = arr[i].ToObject<EnemyPathEntry>();
-                entry.enemies = arr[i]["enemies"].ToObject<List<EnemyDefinition>>();
-                entries.Add(entry);
-            }
+            entries = new EnemyList(((TextAsset)await YAssetLoader.Instance.Load<TextAsset>(
+            _currentGameState.CurrentScene.name + "_sceneEnemy")).text).entries;
             _currentGameState.enemyData = entries;
         }
         else
@@ -98,178 +86,152 @@ public class GMemoryCache : Singleton<GMemoryCache>
         return res;
     }
 
-        public bool CopyChild(Transform parent)
-        {
-            if(parent == null || parent.childCount == 0) return false;
-            Transform newobj = UnityEngine.Object.Instantiate(parent.GetChild(0), parent);
-            return true;
-        }
-
-        #region 角色数据管理
-        public void StoreCharacters(string key, Character[] characters)
-        {
-            lock (_lock)
-            {
-                if (_characterCache.ContainsKey(key))
-                {
-                    _characterCache[key] = (Character[])_characterCache[key].Concat(characters);
-                }
-                else
-                {
-                    _characterCache.Add(key, characters);
-                }
-            }
-        }
-
-        public Character[] GetCharacters(string key)
-        {
-            lock (_lock)
-            {
-                if(_characterCache.ContainsKey(key))
-                {
-                    return _characterCache[key];
-                }
-                return new Character[_characterCache[key].Length];
-            }
-        }
-        #endregion
-
-        #region 物品数据管理
-        public void StoreItems(string key, Item[] items)
-        {
-            lock (_lock)
-            {
-                if (_itemCache.ContainsKey(key))
-                {
-                    _itemCache[key] = items;
-                }
-                else
-                {
-                    _itemCache.Add(key, items);
-                }
-            }
-        }
-
-        public Item[] GetItems(string key)
-        {
-            lock (_lock)
-            {
-                if (_itemCache.ContainsKey(key))
-                {
-                    return _itemCache[key];
-                }
-                return new Item[0];
-            }
-        }
-
-        public void AddItem(string key, Item newItem)
-        {
-            lock (_lock)
-            {
-                if (_itemCache.ContainsKey(key))
-                {
-                    _itemCache[key] = (Item[])_itemCache[key].Concat(new Item[] { newItem });
-                }
-                else
-                {
-                    _itemCache.Add(key, new Item[] { newItem });
-                }
-            }
-        }
-
-        public bool RemoveItem(string key, string itemId)
-        {
-            lock (_lock)
-            {
-                if (_itemCache.ContainsKey(key))
-                {
-                    List<Item> items =  new List<Item>(_itemCache[key]);
-                    int index = items.FindIndex(i => i.Id == itemId);
-                    if (index >= 0)
-                    {
-                        items.RemoveAt(index);
-                        _itemCache[key] = items.ToArray();
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }
-        #endregion
-
-        #region 游戏状态管理
-        public GameState GetGameState()
-        {
-            lock (_lock)
-            {
-                return _currentGameState;
-            }
-        }
-
-        public void UpdateGameState(Action<GameState> updateAction)
-        {
-            lock (_lock)
-            {
-                updateAction?.Invoke(_currentGameState);
-            }
-        }
-
-        public void SetGameState(GameState newState)
-        {
-            lock (_lock)
-            {
-                _currentGameState = (GameState)newState.Clone();
-            }
-        }
-        #endregion
-
-        #region 辅助方法
-        public void ClearAllData()
-        {
-            lock (_lock)
-            {
-                _characterCache.Clear();
-                _itemCache.Clear();
-                _currentGameState = new GameState();
-            }
-        }
-
-        public void ClearCache(string key)
-        {
-            lock (_lock)
-            {
-                _characterCache.Remove(key);
-                _itemCache.Remove(key);
-            }
-        }
-        #endregion
-    }
-
-    // 游戏状态类
-public class GameState : ICloneable
-{
-    public Scene CurrentScene { get; set; }
-    public DateTime GameTime { get; set; } = DateTime.Now;
-
-    public Character[] chaList;
-    public int MainCharacterIndex { get; set; } = 0;
-    public Vector3 position { get; set; }
-    public List<EnemyPathEntry> enemyData { get; set; }
-
-    public object Clone()
+    public bool CopyChild(Transform parent)
     {
-        return this.MemberwiseClone();
+        if(parent == null || parent.childCount == 0) return false;
+        Transform newobj = UnityEngine.Object.Instantiate(parent.GetChild(0), parent);
+        return true;
     }
 
+    #region 角色数据管理
+    public void StoreCharacters(string key, Character[] characters)
+    {
+        lock (_lock)
+        {
+            if (_characterCache.ContainsKey(key))
+            {
+                _characterCache[key] = (Character[])_characterCache[key].Concat(characters);
+            }
+            else
+            {
+                _characterCache.Add(key, characters);
+            }
+        }
+    }
+
+    public Character[] GetCharacters(string key)
+    {
+        lock (_lock)
+        {
+            if(_characterCache.ContainsKey(key))
+            {
+                return _characterCache[key];
+            }
+            return new Character[_characterCache[key].Length];
+        }
+    }
+    #endregion
+
+    #region 物品数据管理
+    public void StoreItems(string key, Item[] items)
+    {
+        lock (_lock)
+        {
+            if (_itemCache.ContainsKey(key))
+            {
+                _itemCache[key] = items;
+            }
+            else
+            {
+                _itemCache.Add(key, items);
+            }
+        }
+    }
+
+    public Item[] GetItems(string key)
+    {
+        lock (_lock)
+        {
+            if (_itemCache.ContainsKey(key))
+            {
+                return _itemCache[key];
+            }
+            return new Item[0];
+        }
+    }
+
+    public void AddItem(string key, Item newItem)
+    {
+        lock (_lock)
+        {
+            if (_itemCache.ContainsKey(key))
+            {
+                _itemCache[key] = (Item[])_itemCache[key].Concat(new Item[] { newItem });
+            }
+            else
+            {
+                _itemCache.Add(key, new Item[] { newItem });
+            }
+        }
+    }
+
+    public bool RemoveItem(string key, string itemId)
+    {
+        lock (_lock)
+        {
+            if (_itemCache.ContainsKey(key))
+            {
+                List<Item> items =  new List<Item>(_itemCache[key]);
+                int index = items.FindIndex(i => i.Id == itemId);
+                if (index >= 0)
+                {
+                    items.RemoveAt(index);
+                    _itemCache[key] = items.ToArray();
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    #endregion
+
+    #region 游戏状态管理
+    public GameState GetGameState()
+    {
+        lock (_lock)
+        {
+            return _currentGameState;
+        }
+    }
+
+    public void setGameState(Action<GameState> updateAction)
+    {
+        lock (_lock)
+        {
+            updateAction?.Invoke(_currentGameState);
+            _currentGameState.StartNewSession();
+        }
+    }
+
+    public void SetGameState(GameState newState)
+    {
+        lock (_lock)
+        {
+            _currentGameState = (GameState)newState.Clone();
+        }
+    }
+    #endregion
+
+    #region 辅助方法
+    public void ClearAllData()
+    {
+        lock (_lock)
+        {
+            _characterCache.Clear();
+            _itemCache.Clear();
+            _currentGameState = new GameState();
+        }
+    }
+
+    public void ClearCache(string key)
+    {
+        lock (_lock)
+        {
+            _characterCache.Remove(key);
+            _itemCache.Remove(key);
+        }
+    }
+    #endregion
 }
 
-// 物品基类
-public class Item
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public int Count { get; set; } = 1;
-    public bool CanStack { get; set; }
-    public int MaxStack { get; set; } = 99;
-}
+

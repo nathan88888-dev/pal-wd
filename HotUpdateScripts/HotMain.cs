@@ -12,15 +12,18 @@ public class HotMain : MonoBehaviour
     }
     private string url = "https://nathan88888-dev.github.io/Health/Check/wd3D";
     private ServerStatus sStatus;
+    private GameState gameState;
     //
     // is called once before the first execution of Update after the MonoBehaviour is created
     async UniTask Awake()
     {
+        gameState = GMemoryCache.Instance.GetGameState();
         if (await CheckWebsite())
         {
             DontDestroyOnLoad(gameObject);
-            ConfigLoader.Init().Forget();
-            SwitchScene<UIStart>().Forget();
+            await UniTask.WaitUntil(() => ConfigLoader.Instance != null);
+            await UniTask.WaitUntil(() => UIManager.Instance != null);
+            await SwitchScene<UIStart>();
         }
     }
 
@@ -36,16 +39,21 @@ public class HotMain : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        gameState.CommitSessionTime();
+    }
+
     public static async UniTask SwitchScene<T>(string name = null)where T:MonoBehaviour
     {
+        UILoading loading = await UIManager.Instance.GetLoadingUI();
         if (name != null) {
-            UILoading loading = await UIManager.Instance.ShowUIAsync<UILoading>();
             UIManager.Instance.CleanUI();
             await YAssetLoader.Instance.LoadScene(PathConstant.PackScenePath+ name,
-                loading.Progress);
+                loading);
         }
         await UIManager.Instance.ShowUIAsync<T>();
-        UIManager.Instance.HideUI<UILoading>();
+        loading.SetProgress(-1);
     }
 
     async UniTask<bool> CheckWebsite()
@@ -56,7 +64,6 @@ public class HotMain : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             string json = request.downloadHandler.text;
-            Debug.Log(json);
             try
             {
                 sStatus = JsonUtility.FromJson<ServerStatus>(json);
